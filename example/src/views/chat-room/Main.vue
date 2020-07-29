@@ -198,17 +198,6 @@ export default {
   &.overflow {
     flex-direction: column;
   }
-  .stream-item {
-    display: flex;
-    align-items: center;
-    padding: 1em;
-    @media (max-width: 640px) {
-      padding: .5em;
-    }
-    &.creator {
-      flex-direction: row-reverse;
-    }
-  }
 }
 .empty {
   .wrapper {

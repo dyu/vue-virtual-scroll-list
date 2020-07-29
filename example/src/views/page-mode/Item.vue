@@ -10,17 +10,17 @@
 
 <script>
 
+import { Wrapper, ItemProps } from '../../../../src/index'
+
 export default {
   name: 'page-mode-item',
+  mixins: [Wrapper],
 
-  props: {
+  props: Object.assign({
     source: {
       type: Object,
-      default () {
-        return {}
-      }
     }
-  }
+  }, ItemProps)
 }
 </script>
 

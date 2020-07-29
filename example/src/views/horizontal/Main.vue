@@ -14,8 +14,6 @@
 
           :estimate-size="110"
           :direction="'horizontal'"
-          :wrap-class="'wrapper'"
-          :item-class="'list-item-horizontal'"
         />
       </div>
 
@@ -78,13 +76,9 @@ export default {
   border-color: dimgray;
   display: flex; // when using scrollToBottom()
 
-  .wrapper {
+  > div {
     display: flex;
     flex-direction: row;
-  }
-
-  .list-item-horizontal {
-    border-right: 1px solid #dfdfdf;
   }
 }
 </style>

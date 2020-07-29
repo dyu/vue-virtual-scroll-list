@@ -11,7 +11,7 @@
           :data-component="itemComponent"
           :estimate-size="135"
           :item-class="'list-item-page'"
-          :page-mode="true"
+          :page-mode="'document'"
           v-on:totop="totop"
           v-on:tobottom="tobottom"
         />

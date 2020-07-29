@@ -6,18 +6,16 @@
 </template>
 
 <script>
+import { Wrapper, ItemProps } from '../../../../src/index'
 
 export default {
   name: 'fix-size-item',
-
-  props: {
+  mixins: [Wrapper],
+  props: Object.assign({
     source: {
       type: Object,
-      default () {
-        return {}
-      }
     }
-  }
+  }, ItemProps)
 }
 </script>
 

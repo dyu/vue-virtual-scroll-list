@@ -9,18 +9,16 @@
 </template>
 
 <script>
+import { Wrapper, ItemProps } from '../../../../src/index'
 
 export default {
   name: 'dynamic-size-item',
-
-  props: {
+  mixins: [Wrapper],
+  props: Object.assign({
     source: {
       type: Object,
-      default () {
-        return {}
-      }
     }
-  }
+  }, ItemProps)
 }
 </script>
 

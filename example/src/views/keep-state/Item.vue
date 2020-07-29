@@ -8,20 +8,18 @@
 
 <script>
 import mixins from '../../mixins'
+import { Wrapper, ItemProps } from '../../../../src/index'
 
 export default {
   name: 'keep-state-item',
 
-  mixins: [mixins],
+  mixins: [Wrapper, mixins],
 
-  props: {
+  props: Object.assign({
     source: {
       type: Object,
-      default () {
-        return {}
-      }
     }
-  },
+  }, ItemProps),
 
   methods: {
     onChange (e) {

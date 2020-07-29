@@ -1,39 +1,45 @@
 <template>
-  <div class="item" :class="{ creator: source.isCreator }">
-    <div class="avatar">
-      <img :src="source.user.avatar" />
-    </div>
-    <div class="body">
-      <div class="name" v-if="!source.isCreator">{{ source.user.name }}</div>
-      <div class="content">
-        <div class="text">{{ source.content }}</div>
+  <div class="stream-item">
+    <div class="item" :class="{ creator: source.isCreator }">
+      <div class="avatar">
+        <img :src="source.user.avatar" />
+      </div>
+      <div class="body">
+        <div class="name" v-if="!source.isCreator">{{ source.user.name }}</div>
+        <div class="content">
+          <div class="text">{{ source.content }}</div>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import { Wrapper, ItemProps } from '../../../../src/index'
 
 export default {
   name: 'chat-room-item',
-
-  props: {
+  mixins: [Wrapper],
+  props: Object.assign({
     source: {
       type: Object,
-      default () {
-        return {
-          sid: '',
-          user: {},
-          content: '',
-          images: []
-        }
-      }
     }
-  }
+  }, ItemProps)
 }
 </script>
 
 <style lang="less" scoped>
+.stream-item {
+  display: flex;
+  align-items: center;
+  padding: 1em;
+  @media (max-width: 640px) {
+    padding: .5em;
+  }
+  &.creator {
+    flex-direction: row-reverse;
+  }
+}
 .item {
   display: flex;
   .avatar {

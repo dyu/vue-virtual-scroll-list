@@ -44,7 +44,12 @@ const routes = [
     path: '/page-mode',
     name: 'page-mode',
     component: () => import(/* webpackChunkName: "page-mode" */ '../views/page-mode/Main.vue')
-  }
+  },
+  {
+    path: '/table-keep-state',
+    name: 'table-keep-state',
+    component: () => import(/* webpackChunkName: "table-keep-state" */ '../views/table-keep-state/Main.vue')
+  },
 ]
 
 // just for development, if you want to run this project in your local
@@ -53,7 +58,7 @@ if (process.env.NODE_ENV === 'development') {
   routes.push({
     path: '/dev',
     name: 'dev',
-    component: () => import(/* webpackChunkName: "dev" */ '../views/dev/Main.vue')
+    component: () => import(/* webpackChunkName: "dev" */ '../views/table-keep-state/Main.vue')
   })
 }
 
