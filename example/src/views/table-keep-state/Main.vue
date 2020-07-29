@@ -110,6 +110,7 @@ export default {
   overflow-y: auto;
   overflow-anchor: none;
   border-color: dimgray;
+  padding: 0 10px;
 
   table {
     table-layout: fixed;
