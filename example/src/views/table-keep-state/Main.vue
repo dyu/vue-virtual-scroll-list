@@ -112,7 +112,7 @@ export default {
   border-color: dimgray;
 
   table {
-    border-collapse: separate;
+    table-layout: fixed;
   }
 }
 </style>
