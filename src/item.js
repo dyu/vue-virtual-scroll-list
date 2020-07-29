@@ -6,12 +6,45 @@
 import Vue from 'vue'
 import { ItemProps, SlotProps } from './props'
 
-const Wrapper = {
+function getOffsetWidth (el) {
+  return el.offsetWidth
+}
+function getOffsetHeight (el) {
+  return el.offsetHeight
+}
+/* function getRowHeight (tr) {
+  let height = tr.getBoundingClientRect().height
+  const table = tr.closest('table')
+  const style = window.getComputedStyle(table)
+  const collapse = style.getPropertyValue('border-collapse')
+  if (collapse === 'separate') {
+    const space = parseFloat(
+      style.getPropertyValue('border-spacing').split(' ')[1].replace(/[^\d.]/g, '')
+    )
+    if (table.rows.length === 1) {
+      height += space * 2
+    } else if (tr.rowIndex === 0 || tr.rowIndex === table.rows.length - 1) {
+      height += space + space / 2
+    } else {
+      height += space
+    }
+  }
+  return height
+  // return tr.getBoundingClientRect().height
+}
+function getRowWidth (tr) {
+  return tr.getBoundingClientRect().width
+} */
+
+export const Wrapper = {
   created () {
-    this.shapeKey = this.horizontal ? 'offsetWidth' : 'offsetHeight'
+    this.fnCurrentSize = this.horizontal ? getOffsetWidth : getOffsetHeight
   },
 
   mounted () {
+    /* if (this.$el.tagName === 'TR') {
+      this.fnCurrentSize = this.horizontal ? getRowWidth : getRowHeight
+    } */
     if (typeof ResizeObserver !== 'undefined') {
       this.resizeObserver = new ResizeObserver(() => {
         this.dispatchSizeChange()
@@ -34,7 +67,8 @@ const Wrapper = {
 
   methods: {
     getCurrentSize () {
-      return this.$el ? this.$el[this.shapeKey] : 0
+      const el = this.$el
+      return !el ? 0 : this.fnCurrentSize(el)
     },
 
     // tell parent current size identify by unqiue key

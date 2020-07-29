@@ -4,8 +4,8 @@
 
 import Vue from 'vue'
 import Virtual from './virtual'
-import { Item, Slot } from './item'
-import { VirtualProps } from './props'
+import { Wrapper, Slot } from './item'
+import { VirtualProps, ItemProps } from './props'
 
 const EVENT_TYPE = {
   ITEM: 'item_resize',
@@ -16,12 +16,13 @@ const SLOT_TYPE = {
   FOOTER: 'footer'
 }
 
-const VirtualList = Vue.component('virtual-list', {
+export const VirtualList = Vue.component('virtual-list', {
   props: VirtualProps,
 
   data () {
     return {
-      range: null
+      range: null,
+      elScroll: null
     }
   },
 
@@ -72,22 +73,23 @@ const VirtualList = Vue.component('virtual-list', {
     } else if (this.offset) {
       this.scrollToOffset(this.offset)
     }
-
-    // in page mode we bind scroll event to document
-    if (this.pageMode) {
+    const pageMode = this.pageMode
+    let el
+    if (!pageMode) {
+      this.elScroll = el = this.$el
+    } else if (pageMode === 'document') {
+      this.elScroll = el = document
       this.updatePageModeFront()
-
-      document.addEventListener('scroll', this.onScroll, {
-        passive: false
-      })
+    } else {
+      this.elScroll = el = this.$el.closest(pageMode)
     }
+    el.addEventListener('scroll', this.onScroll, { passive: false })
   },
 
   beforeDestroy () {
     this.virtual.destroy()
-    if (this.pageMode) {
-      document.removeEventListener('scroll', this.onScroll)
-    }
+    this.elScroll.removeEventListener('scroll', this.onScroll)
+    this.elScroll = null
   },
 
   methods: {
@@ -103,46 +105,40 @@ const VirtualList = Vue.component('virtual-list', {
 
     // return current scroll offset
     getOffset () {
-      if (this.pageMode) {
+      if (this.pageMode === 'document') {
         return document.documentElement[this.directionKey] || document.body[this.directionKey]
       } else {
-        const { root } = this.$refs
-        return root ? Math.ceil(root[this.directionKey]) : 0
+        return Math.ceil(this.elScroll[this.directionKey])
       }
     },
 
     // return client viewport size
     getClientSize () {
       const key = this.isHorizontal ? 'clientWidth' : 'clientHeight'
-      if (this.pageMode) {
+      if (this.pageMode === 'document') {
         return document.documentElement[key] || document.body[key]
       } else {
-        const { root } = this.$refs
-        return root ? Math.ceil(root[key]) : 0
+        return Math.ceil(this.elScroll[key])
       }
     },
 
     // return all scroll size
     getScrollSize () {
       const key = this.isHorizontal ? 'scrollWidth' : 'scrollHeight'
-      if (this.pageMode) {
+      if (this.pageMode === 'document') {
         return document.documentElement[key] || document.body[key]
       } else {
-        const { root } = this.$refs
-        return root ? Math.ceil(root[key]) : 0
+        return Math.ceil(this.elScroll[key])
       }
     },
 
     // set current scroll position to a expectant offset
     scrollToOffset (offset) {
-      if (this.pageMode) {
+      if (this.pageMode === 'document') {
         document.body[this.directionKey] = offset
         document.documentElement[this.directionKey] = offset
       } else {
-        const { root } = this.$refs
-        if (root) {
-          root[this.directionKey] = offset
-        }
+        this.elScroll[this.directionKey] = offset
       }
     },
 
@@ -178,7 +174,7 @@ const VirtualList = Vue.component('virtual-list', {
     // when using page mode we need update slot header size manually
     // taking root offset relative to the browser as slot header size
     updatePageModeFront () {
-      const { root } = this.$refs
+      const root = this.$el
       if (root) {
         const rect = root.getBoundingClientRect()
         const { defaultView } = root.ownerDocument
@@ -270,25 +266,25 @@ const VirtualList = Vue.component('virtual-list', {
     getRenderSlots (h) {
       const slots = []
       const { start, end } = this.range
-      const { dataSources, dataKey, itemClass, itemTag, itemStyle, isHorizontal, extraProps, dataComponent, itemScopedSlots } = this
+      const { dataSources, dataKey, itemClass/*, itemTag, itemStyle */, isHorizontal, extraProps, dataComponent/*, itemScopedSlots */ } = this
       for (let index = start; index <= end; index++) {
         const dataSource = dataSources[index]
         if (dataSource) {
           const uniqueKey = typeof dataKey === 'function' ? dataKey(dataSource) : dataSource[dataKey]
           if (typeof uniqueKey === 'string' || typeof uniqueKey === 'number') {
-            slots.push(h(Item, {
-              props: {
+            slots.push(h(dataComponent, {
+              props: Object.assign({
                 index,
-                tag: itemTag,
+                uniqueKey,
+                // tag: itemTag,
                 event: EVENT_TYPE.ITEM,
                 horizontal: isHorizontal,
-                uniqueKey: uniqueKey,
-                source: dataSource,
-                extraProps: extraProps,
-                component: dataComponent,
-                scopedSlots: itemScopedSlots
-              },
-              style: itemStyle,
+                key: uniqueKey,
+                source: dataSource
+                // component: dataComponent
+                // scopedSlots: itemScopedSlots
+              }, extraProps),
+              // style: itemStyle,
               class: `${itemClass}${this.itemClassAdd ? ' ' + this.itemClassAdd(index) : ''}`
             }))
           } else {
@@ -307,16 +303,20 @@ const VirtualList = Vue.component('virtual-list', {
   render (h) {
     const { header, footer } = this.$slots
     const { padFront, padBehind } = this.range
-    const { isHorizontal, pageMode, rootTag, wrapTag, wrapClass, wrapStyle, headerTag, headerClass, headerStyle, footerTag, footerClass, footerStyle } = this
+    const { isHorizontal, pageMode, rootTag, wrapTag/* , wrapClass, wrapStyle */, headerTag, headerClass, headerStyle, footerTag, footerClass, footerStyle } = this
     const paddingStyle = { padding: isHorizontal ? `0px ${padBehind}px 0px ${padFront}px` : `${padFront}px 0px ${padBehind}px` }
-    const wrapperStyle = wrapStyle ? Object.assign({}, wrapStyle, paddingStyle) : paddingStyle
 
-    return h(rootTag, {
-      ref: 'root',
-      on: {
-        '&scroll': !pageMode && this.onScroll
-      }
-    }, [
+    const emptyAttrs = {}
+    const paddingAttrs = { style: paddingStyle }
+    let wrapAttrs, rootAttrs
+    if (!pageMode || pageMode === 'document') {
+      rootAttrs = emptyAttrs
+      wrapAttrs = paddingAttrs
+    } else {
+      wrapAttrs = emptyAttrs
+      rootAttrs = paddingAttrs
+    }
+    return h(rootTag, rootAttrs, [
       // header slot
       header ? h(Slot, {
         class: headerClass,
@@ -329,13 +329,7 @@ const VirtualList = Vue.component('virtual-list', {
       }, header) : null,
 
       // main list
-      h(wrapTag, {
-        class: wrapClass,
-        attrs: {
-          role: 'group'
-        },
-        style: wrapperStyle
-      }, this.getRenderSlots(h)),
+      h(wrapTag, wrapAttrs, this.getRenderSlots(h)),
 
       // footer slot
       footer ? h(Slot, {
@@ -360,4 +354,5 @@ const VirtualList = Vue.component('virtual-list', {
   }
 })
 
+export { Wrapper, ItemProps }
 export default VirtualList

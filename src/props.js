@@ -49,8 +49,8 @@ export const VirtualProps = {
     default: 0
   },
   pageMode: {
-    type: Boolean,
-    default: false
+    type: String,
+    default: ''
   },
   rootTag: {
     type: String,
@@ -60,6 +60,7 @@ export const VirtualProps = {
     type: String,
     default: 'div'
   },
+  /*
   wrapClass: {
     type: String,
     default: ''
@@ -71,6 +72,7 @@ export const VirtualProps = {
     type: String,
     default: 'div'
   },
+  */
   itemClass: {
     type: String,
     default: ''
@@ -78,9 +80,11 @@ export const VirtualProps = {
   itemClassAdd: {
     type: Function
   },
+  /*
   itemStyle: {
     type: Object
   },
+  */
   headerTag: {
     type: String,
     default: 'div'
@@ -102,10 +106,12 @@ export const VirtualProps = {
   },
   footerStyle: {
     type: Object
-  },
+  }
+  /*
   itemScopedSlots: {
     type: Object
   }
+  */
 }
 
 export const ItemProps = {
@@ -115,27 +121,27 @@ export const ItemProps = {
   event: {
     type: String
   },
-  tag: {
-    type: String
-  },
+  // tag: {
+  //  type: String
+  // },
   horizontal: {
     type: Boolean
   },
   source: {
     type: Object
   },
-  component: {
-    type: [Object, Function]
-  },
+  // component: {
+  //  type: [Object, Function]
+  // },
   uniqueKey: {
     type: [String, Number]
-  },
-  extraProps: {
-    type: Object
-  },
-  scopedSlots: {
-    type: Object
   }
+  // extraProps: {
+  //  type: Object
+  // },
+  // scopedSlots: {
+  //  type: Object
+  // }
 }
 
 export const SlotProps = {
