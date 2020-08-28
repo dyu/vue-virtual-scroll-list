@@ -419,6 +419,10 @@
       type: Number,
       "default": 0
     },
+    paddingViaCssProp: {
+      type: Boolean,
+      "default": false
+    },
     pageMode: {
       type: String,
       "default": ''
@@ -942,6 +946,7 @@
           padFront = _this$range2.padFront,
           padBehind = _this$range2.padBehind;
       var isHorizontal = this.isHorizontal,
+          paddingViaCssProp = this.paddingViaCssProp,
           pageMode = this.pageMode,
           rootTag = this.rootTag,
           wrapTag = this.wrapTag,
@@ -951,21 +956,22 @@
           footerTag = this.footerTag,
           footerClass = this.footerClass,
           footerStyle = this.footerStyle;
-      var paddingStyle = {
+      var styleAttrs = paddingViaCssProp ? {
+        '--padding-before': "".concat(padFront, "px"),
+        '--padding-after': "".concat(padBehind, "px")
+      } : {
         padding: isHorizontal ? "0px ".concat(padBehind, "px 0px ").concat(padFront, "px") : "".concat(padFront, "px 0px ").concat(padBehind, "px")
-      };
-      var emptyAttrs = {};
-      var paddingAttrs = {
-        style: paddingStyle
       };
       var wrapAttrs, rootAttrs;
 
       if (!pageMode || pageMode === 'document') {
-        rootAttrs = emptyAttrs;
-        wrapAttrs = paddingAttrs;
+        wrapAttrs = {
+          style: styleAttrs
+        };
       } else {
-        wrapAttrs = emptyAttrs;
-        rootAttrs = paddingAttrs;
+        rootAttrs = {
+          style: styleAttrs
+        };
       }
 
       return h(rootTag, rootAttrs, [// header slot
