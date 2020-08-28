@@ -48,6 +48,10 @@ export const VirtualProps = {
     type: Number,
     default: 0
   },
+  paddingViaCssProp: {
+    type: Boolean,
+    default: false
+  },
   pageMode: {
     type: String,
     default: ''

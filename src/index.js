@@ -303,18 +303,15 @@ export const VirtualList = Vue.component('virtual-list', {
   render (h) {
     const { header, footer } = this.$slots
     const { padFront, padBehind } = this.range
-    const { isHorizontal, pageMode, rootTag, wrapTag/* , wrapClass, wrapStyle */, headerTag, headerClass, headerStyle, footerTag, footerClass, footerStyle } = this
-    const paddingStyle = { padding: isHorizontal ? `0px ${padBehind}px 0px ${padFront}px` : `${padFront}px 0px ${padBehind}px` }
-
-    const emptyAttrs = {}
-    const paddingAttrs = { style: paddingStyle }
+    const { isHorizontal, paddingViaCssProp, pageMode, rootTag, wrapTag/* , wrapClass, wrapStyle */, headerTag, headerClass, headerStyle, footerTag, footerClass, footerStyle } = this
+    const styleAttrs = paddingViaCssProp
+      ? { '--padding-before': `${padFront}px`, '--padding-after': `${padBehind}px` }
+      : { padding: isHorizontal ? `0px ${padBehind}px 0px ${padFront}px` : `${padFront}px 0px ${padBehind}px` }
     let wrapAttrs, rootAttrs
     if (!pageMode || pageMode === 'document') {
-      rootAttrs = emptyAttrs
-      wrapAttrs = paddingAttrs
+      wrapAttrs = { style: styleAttrs }
     } else {
-      wrapAttrs = emptyAttrs
-      rootAttrs = paddingAttrs
+      rootAttrs = { style: styleAttrs }
     }
     return h(rootTag, rootAttrs, [
       // header slot
