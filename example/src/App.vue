@@ -18,6 +18,8 @@
       <router-link to="/chat-room">chat room</router-link>
       <span class="line">|</span>
       <router-link to="/table-keep-state">table keep state</router-link>
+      <span class="line">|</span>
+      <router-link to="/table-keep-state-cssprop">table keep state via css prop</router-link>
     </div>
     <router-view/>
   </div>

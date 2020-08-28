@@ -50,6 +50,11 @@ const routes = [
     name: 'table-keep-state',
     component: () => import(/* webpackChunkName: "table-keep-state" */ '../views/table-keep-state/Main.vue')
   },
+  {
+    path: '/table-keep-state-cssprop',
+    name: 'table-keep-state-cssprop',
+    component: () => import(/* webpackChunkName: "table-keep-state-cssprop" */ '../views/table-keep-state-cssprop/Main.vue')
+  },
 ]
 
 // just for development, if you want to run this project in your local
